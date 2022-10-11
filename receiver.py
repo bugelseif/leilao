@@ -1,26 +1,20 @@
+import json
 import socket
 import struct
-import sys
 import threading
-
-IP = '127.0.0.1'
-PORT = 50000
+from time import sleep
 
 MCAST_GRP = '224.1.2.3'
 MCAST_PORT = 5004
 
 def main():
-    print('Iniciando cliente...')
-    clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    entra = input("Gostaria de entrar no grupo?")
-    if entra != 'sim':
-        sys.exit()
-    else:
-        clientSock.sendto(bytes('join', 'utf-8'), (IP, PORT))
-        pedido_join = clientSock.recv(1024)
-        print(f'Recebido: {pedido_join}', end='\n\n\n')
-        threading.Thread(target=grupo_receiver).start()
-    
+    ip = '127.0.0.1'
+    port = 50000
+
+    clientSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    clientSock.connect((ip, port))
+    threading.Thread(target=grupo_receiver).start()
+
 
 def grupo_receiver():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -33,7 +27,8 @@ def grupo_receiver():
 
     while True:
         print('Aguardando mensagem')
-        print(sock.recv(10240))
+        print(json.loads(sock.recv(10240)))
+
 
 if __name__ == '__main__':
     main()
