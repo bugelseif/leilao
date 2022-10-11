@@ -21,8 +21,7 @@ def run(port):
             (clientSocket, address) = serverSocket.accept()
             print(f'connect to: {clientSocket}')
             threading.Thread(
-                target=join,
-                kwargs={'clientSocket': clientSocket.makefile('rw')},
+                target=join
             ).start()
 
     except Exception:
